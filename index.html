@@ -10,12 +10,24 @@
     />
     <meta name="theme-color" content="#0b0b0b" />
     <link rel="preload" href="fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="fonts/pinyon-script.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="fonts/pirata-one.woff2" as="font" type="font/woff2" crossorigin />
     <style>
       @font-face {
         font-family: "Archivo";
         src: url("fonts/archivo-var.woff2") format("woff2");
         font-weight: 100 900;
         font-stretch: 62% 125%;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Pinyon";
+        src: url("fonts/pinyon-script.woff2") format("woff2");
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Pirata";
+        src: url("fonts/pirata-one.woff2") format("woff2");
         font-display: swap;
       }
       @font-face {
@@ -224,25 +236,27 @@
       /* Wordmark */
       .mark-wrap { overflow: hidden; padding: 28px 10px 0; }
       .mark {
-        font-stretch: 125%;
-        font-weight: 800;
-        font-size: 32.5vw;
-        letter-spacing: -0.07em;
-        line-height: 0.74;
+        display: flex;
+        align-items: baseline;
+        font-size: 34.5vw;
+        line-height: 1;
         white-space: nowrap;
-        margin-bottom: -3vw;
         user-select: none;
+        margin-bottom: -0.06em;
       }
+      .mark .l { font-family: "Pinyon", cursive; font-size: 1.35em; margin-right: -0.06em; }
+      .mark .b { font-family: var(--sans); font-stretch: 125%; font-weight: 800; letter-spacing: -0.04em; margin-right: 0.03em; }
+      .mark .m { font-family: "Pirata", serif; font-size: 1.12em; }
       .mark i {
         display: inline-block;
         width: 0.16em;
         height: 0.16em;
-        margin-left: 0.04em;
+        margin-left: 0.05em;
         background: var(--accent);
       }
       @media (min-width: 900px) {
         .mark-wrap { padding: 40px 18px 0; }
-        .mark { font-size: 33.5vw; margin-bottom: -4.6vw; }
+        .mark { font-size: 35vw; }
       }
 
       /* Sections */
@@ -454,7 +468,7 @@
           </div>
         </div>
 
-        <div class="mark-wrap" aria-hidden="true"><div class="mark">LBM<i></i></div></div>
+        <div class="mark-wrap" aria-hidden="true"><div class="mark"><span class="l">L</span><span class="b">B</span><span class="m">M</span><i></i></div></div>
       </section>
 
 
