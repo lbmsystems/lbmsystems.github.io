@@ -43,7 +43,7 @@
       }
 
       * { box-sizing: border-box; }
-      html { scroll-behavior: smooth; scroll-padding-top: 56px; }
+      html { scroll-behavior: smooth; scroll-padding-top: 96px; }
       body {
         margin: 0;
         background: var(--ink);
@@ -78,7 +78,7 @@
 
       /* Top bar + section strip */
       .top {
-        position: relative;
+        position: sticky;
         top: 0;
         z-index: 40;
         background: rgba(11, 11, 11, 0.92);
@@ -118,9 +118,6 @@
       @media (max-width: 420px) {
         .strip a { padding: 12px 10px; font-size: 10px; letter-spacing: 0.04em; }
         .strip a span { margin-right: 4px; }
-      }
-      @media (min-width: 900px) {
-        .top { position: sticky; }
       }
 
       /* Hero */
