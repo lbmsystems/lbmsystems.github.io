@@ -394,6 +394,132 @@
           padding-top: 42px;
         }
       }
+      .consult-modal {
+        width: min(520px, calc(100% - 32px));
+        max-height: calc(100% - 32px);
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+        color: var(--text);
+      }
+
+      .consult-modal::backdrop {
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(4px);
+      }
+
+      .modal-inner {
+        padding: 28px;
+      }
+
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 6px;
+      }
+
+      .modal-head h2 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .modal-close {
+        background: none;
+        border: 0;
+        color: var(--muted);
+        font-size: 1.6rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0 4px;
+      }
+
+      .modal-close:hover {
+        color: var(--text);
+      }
+
+      .modal-sub {
+        margin: 0 0 20px;
+        color: var(--muted);
+      }
+
+      .consult-form {
+        display: grid;
+        gap: 14px;
+      }
+
+      .consult-form label {
+        display: grid;
+        gap: 6px;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .consult-form input,
+      .consult-form textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: var(--panel-2);
+        color: var(--text);
+        font: inherit;
+      }
+
+      .consult-form input:focus,
+      .consult-form textarea:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .consult-form textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .consult-form .hp {
+        display: none;
+      }
+
+      .consult-form .button {
+        cursor: pointer;
+        font: inherit;
+        font-weight: 600;
+        margin-top: 6px;
+      }
+
+      .consult-form .button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+
+      .form-status {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .form-status.error {
+        color: #ffb4b4;
+      }
+
+      .link-button {
+        background: none;
+        border: 0;
+        padding: 0;
+        color: var(--text);
+        font: inherit;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
+      .button[data-open-consult] {
+        cursor: pointer;
+        font: inherit;
+        font-weight: 600;
+      }
     </style>
   </head>
   <body>
@@ -427,7 +553,7 @@
               and build systems that make execution smoother, faster, and easier to manage.
             </p>
             <div class="hero-actions">
-              <a class="button button-primary" href="mailto:arneice@lbm.systems?subject=Consult%20request">Book a consult</a>
+              <button type="button" class="button button-primary" data-open-consult>Book a consult</button>
               <a class="button button-secondary" href="#services">See services</a>
             </div>
           </div>
@@ -513,7 +639,7 @@
           </div>
 
           <p class="service-note">
-            Not sure which one fits? <a href="mailto:arneice@lbm.systems?subject=Consult%20request">Book a consult</a> and tell us what's going on.
+            Not sure which one fits? <button type="button" class="link-button" data-open-consult>Book a consult</button> and tell us what's going on.
           </p>
         </div>
       </section>
@@ -573,8 +699,7 @@
             </div>
 
             <div class="contact-links">
-              <a class="button button-primary" href="mailto:arneice@lbm.systems?subject=Consult%20request">Book a consult</a>
-              <a class="button button-secondary" href="mailto:arneice@lbm.systems">arneice@lbm.systems</a>
+              <button type="button" class="button button-primary" data-open-consult>Book a consult</button>
             </div>
           </div>
         </div>
@@ -586,5 +711,104 @@
         © 2026 LBM Systems. Learn. Build. Maintain.
       </div>
     </footer>
+    <dialog class="consult-modal" id="consult-modal" aria-labelledby="consult-title">
+      <div class="modal-inner">
+        <div class="modal-head">
+          <h2 id="consult-title">Book a consult</h2>
+          <button type="button" class="modal-close" data-close-consult aria-label="Close">&times;</button>
+        </div>
+        <p class="modal-sub">Tell us a little about what's going on and we'll reach out to set up a time.</p>
+
+        <form class="consult-form" id="consult-form" novalidate>
+          <label>Name
+            <input type="text" name="name" autocomplete="name" required />
+          </label>
+          <label>Email
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+          <label>Phone number
+            <input type="tel" name="phone" autocomplete="tel" required />
+          </label>
+          <label>What problem are you looking to solve?
+            <textarea name="message" required placeholder="A few sentences is plenty. What feels harder than it should?"></textarea>
+          </label>
+          <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" />
+          <button type="submit" class="button button-primary">Send request</button>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </dialog>
+
+    <script>
+      (function () {
+        var ENDPOINT = "https://formsubmit.co/ajax/" + ["arneice", "lbm.systems"].join("@");
+        var modal = document.getElementById("consult-modal");
+        var form = document.getElementById("consult-form");
+        var status = document.getElementById("form-status");
+        var submit = form.querySelector('button[type="submit"]');
+
+        function open() {
+          status.textContent = "";
+          status.className = "form-status";
+          form.hidden = false;
+          if (typeof modal.showModal === "function") modal.showModal();
+          else modal.setAttribute("open", "");
+          var first = form.querySelector("input");
+          if (first) first.focus();
+        }
+
+        function close() {
+          if (typeof modal.close === "function") modal.close();
+          else modal.removeAttribute("open");
+        }
+
+        document.querySelectorAll("[data-open-consult]").forEach(function (el) {
+          el.addEventListener("click", function (e) { e.preventDefault(); open(); });
+        });
+        document.querySelectorAll("[data-close-consult]").forEach(function (el) {
+          el.addEventListener("click", close);
+        });
+        modal.addEventListener("click", function (e) { if (e.target === modal) close(); });
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+          }
+          var data = Object.fromEntries(new FormData(form).entries());
+          if (data._honey) return;
+          delete data._honey;
+          data._subject = "New consult request from " + data.name;
+          data._replyto = data.email;
+          data._template = "table";
+
+          submit.disabled = true;
+          submit.textContent = "Sending...";
+          status.textContent = "";
+          status.className = "form-status";
+
+          fetch(ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify(data)
+          })
+            .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+            .then(function (res) {
+              if (!res.ok || String(res.j.success) === "false") throw new Error(res.j.message || "Send failed");
+              form.reset();
+              status.textContent = "Thanks! We got your request and will be in touch soon.";
+            })
+            .catch(function () {
+              status.textContent = "Something went wrong sending your request. Please try again in a moment.";
+              status.className = "form-status error";
+            })
+            .finally(function () {
+              submit.disabled = false;
+              submit.textContent = "Send request";
+            });
+        });
+      })();
+    </script>
   </body>
 </html>
