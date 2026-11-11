@@ -640,12 +640,13 @@
           })
             .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
             .then(function (res) {
-              if (!res.ok || String(res.j.success) === "false") throw new Error("fail");
+              if (!res.ok || String(res.j.success) === "false") throw new Error((res.j && res.j.message) || "fail");
               form.reset();
               status.textContent = "Thanks! We got your request and will be in touch soon.";
             })
-            .catch(function () {
-              status.textContent = "Something went wrong sending your request. Please try again in a moment.";
+            .catch(function (err) {
+              var msg = err && err.message && err.message !== "fail" && err.message !== "Failed to fetch" ? err.message : "";
+              status.textContent = msg || "Something went wrong sending your request. Please try again in a moment.";
               status.className = "status error";
             })
             .finally(function () { submit.disabled = false; submit.innerHTML = submitHTML; });
