@@ -204,34 +204,51 @@
       .rows-label { display: block; padding: 12px 0; }
       .row {
         display: grid;
-        grid-template-columns: 36px 1fr auto;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid var(--line);
+      }
+      .row .toggle {
+        display: grid;
+        grid-template-columns: 36px 1fr;
         gap: 10px;
         align-items: baseline;
-        width: 100%;
         padding: 15px 0;
         background: none;
         border: 0;
-        border-bottom: 1px solid var(--line);
         text-align: left;
         font-size: 16px;
         cursor: pointer;
         transition: color 0.15s;
       }
-      .row .num, .row .tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--dim); }
-      .row .tag { opacity: 0; transform: translateX(-6px); transition: opacity 0.2s, transform 0.2s; }
+      .row .num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--dim); }
+      .row .tag {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        background: none;
+        border: 1px solid var(--line);
+        padding: 7px 10px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.15s, color 0.15s, border-color 0.15s;
+      }
+      .row .tag:hover, .row.open .tag { background: var(--accent); border-color: var(--accent); color: #fff; }
       .row .fix {
-        grid-column: 2 / 4;
+        grid-column: 1 / -1;
         max-height: 0;
         overflow: hidden;
+        padding-left: 46px;
         color: var(--muted);
         font-size: 15px;
-        transition: max-height 0.3s ease;
+        transition: max-height 0.3s ease, padding 0.3s ease;
       }
-      .row:hover, .row[aria-expanded="true"] { color: var(--accent-text); }
-      .row:hover .num, .row[aria-expanded="true"] .num,
-      .row:hover .tag, .row[aria-expanded="true"] .tag { color: var(--accent-text); }
-      .row:hover .tag, .row[aria-expanded="true"] .tag { opacity: 1; transform: none; }
-      .row[aria-expanded="true"] .fix { max-height: 80px; padding-top: 6px; }
+      .row:hover .toggle, .row.open .toggle { color: var(--accent-text); }
+      .row:hover .num, .row.open .num { color: var(--accent-text); }
+      .row.open .fix { max-height: 90px; padding-bottom: 16px; }
 
       /* Wordmark */
       .mark-wrap { overflow: hidden; padding: 28px 10px 0; }
@@ -448,23 +465,27 @@
           </div>
 
           <div class="rows reveal">
-            <span class="rows-label mono dim">Sound familiar? Tap one.</span>
-            <button type="button" class="row" aria-expanded="false">
-              <span class="num">01</span><span>Bookings get missed</span><span class="tag">Fix →</span>
+            <span class="rows-label mono dim">Sound familiar?</span>
+            <div class="row">
+              <button type="button" class="toggle" aria-expanded="false"><span class="num">01</span><span>Bookings get missed</span></button>
+              <button type="button" class="tag" data-open-consult data-topic="Bookings get missed">Fix it →</button>
               <span class="fix">One place to book, with reminders that go out on their own.</span>
-            </button>
-            <button type="button" class="row" aria-expanded="false">
-              <span class="num">02</span><span>Client info is everywhere</span><span class="tag">Fix →</span>
+            </div>
+            <div class="row">
+              <button type="button" class="toggle" aria-expanded="false"><span class="num">02</span><span>Client info is everywhere</span></button>
+              <button type="button" class="tag" data-open-consult data-topic="Client info is everywhere">Fix it →</button>
               <span class="fix">A simple client list your whole team can find and update.</span>
-            </button>
-            <button type="button" class="row" aria-expanded="false">
-              <span class="num">03</span><span>Same questions, all day</span><span class="tag">Fix →</span>
+            </div>
+            <div class="row">
+              <button type="button" class="toggle" aria-expanded="false"><span class="num">03</span><span>Same questions, all day</span></button>
+              <button type="button" class="tag" data-open-consult data-topic="Same questions, all day">Fix it →</button>
               <span class="fix">Answers and follow-ups that send themselves, so you don't have to.</span>
-            </button>
-            <button type="button" class="row" aria-expanded="false">
-              <span class="num">04</span><span>Clients can't find you</span><span class="tag">Fix →</span>
+            </div>
+            <div class="row">
+              <button type="button" class="toggle" aria-expanded="false"><span class="num">04</span><span>Clients can't find you</span></button>
+              <button type="button" class="tag" data-open-consult data-topic="Clients can't find you">Fix it →</button>
               <span class="fix">A website and message that make it clear what you do and who it's for.</span>
-            </button>
+            </div>
           </div>
         </div>
 
@@ -570,10 +591,11 @@
         /* Friction rows: one open at a time */
         var rows = document.querySelectorAll(".row");
         rows.forEach(function (row) {
-          row.addEventListener("click", function () {
-            var open = row.getAttribute("aria-expanded") === "true";
-            rows.forEach(function (r) { r.setAttribute("aria-expanded", "false"); });
-            row.setAttribute("aria-expanded", open ? "false" : "true");
+          var t = row.querySelector(".toggle");
+          t.addEventListener("click", function () {
+            var open = row.classList.contains("open");
+            rows.forEach(function (r) { r.classList.remove("open"); r.querySelector(".toggle").setAttribute("aria-expanded", "false"); });
+            if (!open) { row.classList.add("open"); t.setAttribute("aria-expanded", "true"); }
           });
         });
 
@@ -628,7 +650,14 @@
           if (typeof modal.close === "function") modal.close(); else modal.removeAttribute("open");
         }
         document.querySelectorAll("[data-open-consult]").forEach(function (el) {
-          el.addEventListener("click", function (e) { e.preventDefault(); openModal(); });
+          el.addEventListener("click", function (e) {
+            e.preventDefault();
+            var topic = el.getAttribute("data-topic");
+            var box = form.querySelector("textarea");
+            if (topic && !box.value) box.value = topic + ". ";
+            openModal();
+            if (topic) { box.focus(); box.setSelectionRange(box.value.length, box.value.length); }
+          });
         });
         document.querySelectorAll("[data-close-consult]").forEach(function (el) { el.addEventListener("click", closeModal); });
         modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
