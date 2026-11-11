@@ -276,6 +276,11 @@
         .mark { font-size: 35vw; }
       }
 
+      .lbm-words { max-width: none; line-height: 1.05; }
+      .lbm-words .l { font-family: "Pinyon", cursive; font-weight: 400; font-size: 1.3em; letter-spacing: 0; }
+      .lbm-words .b { font-family: var(--sans); font-stretch: 125%; font-weight: 800; letter-spacing: -0.04em; }
+      .lbm-words .m { font-family: "Pirata", serif; font-weight: 400; font-size: 1.12em; letter-spacing: 0; }
+
       /* Sections */
       .section { border-bottom: 1px solid var(--line); padding-top: 56px; padding-bottom: 64px; }
       @media (min-width: 900px) { .section { padding-top: 88px; padding-bottom: 96px; } }
@@ -524,7 +529,7 @@
       <section class="section pad" id="how">
         <div class="head">
           <span class="mono dim">02 / How it works</span>
-          <div class="reveal"><h2>Learn. Build. Maintain.</h2></div>
+          <div class="reveal"><h2 class="lbm-words" aria-label="Learn. Build. Maintain."><span class="l" aria-hidden="true">Learn.</span> <span class="b" aria-hidden="true">Build.</span> <span class="m" aria-hidden="true">Maintain.</span></h2></div>
         </div>
         <div class="steps">
           <div class="step reveal"><span class="mono dim">01 / Learn</span><h3>Audit</h3><p>We talk, look at how things run now, and agree on what to fix first.</p></div>
