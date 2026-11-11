@@ -6,776 +6,633 @@
     <title>LBM Systems</title>
     <meta
       name="description"
-      content="LBM Systems helps small businesses set up the behind-the-scenes stuff: booking, client tracking, follow-ups, and websites."
+      content="LBM Systems helps small businesses find what's slowing them down and fix it: booking, client tracking, follow-ups, and websites. It all starts with an audit."
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    <meta name="theme-color" content="#0b0b0b" />
+    <link rel="preload" href="fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin />
     <style>
+      @font-face {
+        font-family: "Archivo";
+        src: url("fonts/archivo-var.woff2") format("woff2");
+        font-weight: 100 900;
+        font-stretch: 62% 125%;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "JB Mono";
+        src: url("fonts/jetbrains-mono-500.woff2") format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
+
       :root {
-        --bg: #070707;
+        --ink: #0b0b0b;
         --panel: #121212;
-        --panel-2: #181818;
         --text: #ededed;
-        --muted: #8a8a8a;
-        --dim: #555;
-        --line: rgba(255, 255, 255, 0.08);
-        --max: 1180px;
-        --sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
-        --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        --muted: #a8a8a8;
+        --dim: #6e6e6e;
+        --line: #262626;
+        --accent: #3d5afe;
+        --accent-text: #8394ff;
+        --pad: 16px;
+        --sans: "Archivo", ui-sans-serif, system-ui, -apple-system, sans-serif;
+        --mono: "JB Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      @media (min-width: 900px) {
+        :root { --pad: 28px; }
       }
 
       * { box-sizing: border-box; }
-      html { scroll-behavior: smooth; }
-
+      html { scroll-behavior: smooth; scroll-padding-top: 56px; }
       body {
         margin: 0;
-        background: radial-gradient(ellipse at 50% 35%, #161616 0%, var(--bg) 60%) fixed, var(--bg);
+        background: var(--ink);
         color: var(--text);
         font-family: var(--sans);
-        line-height: 1.55;
+        line-height: 1.45;
         -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
       }
-
-      /* Film grain */
-      body::before {
-        content: "";
-        position: fixed;
-        inset: -50%;
-        z-index: 100;
-        pointer-events: none;
-        opacity: 0.09;
-        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-        animation: grain 0.8s steps(4) infinite;
-      }
-      @keyframes grain {
-        0% { transform: translate(0, 0); }
-        25% { transform: translate(-3%, 2%); }
-        50% { transform: translate(2%, -3%); }
-        75% { transform: translate(-2%, -1%); }
-        100% { transform: translate(0, 0); }
-      }
-
       a { color: inherit; text-decoration: none; }
+      button { font: inherit; color: inherit; }
+      :focus-visible { outline: 2px solid var(--accent-text); outline-offset: 3px; }
 
-      .container {
-        width: min(var(--max), calc(100% - 48px));
-        margin: 0 auto;
+      /* Grain */
+      .grain {
+        position: fixed;
+        inset: 0;
+        z-index: 90;
+        pointer-events: none;
+        opacity: 0.07;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
       }
 
-      .label {
+      .mono {
         font-family: var(--mono);
-        font-size: 0.74rem;
-        letter-spacing: 0.1em;
+        font-size: 11px;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
-        color: var(--muted);
       }
+      .dim { color: var(--dim); }
+      .pad { padding-left: var(--pad); padding-right: var(--pad); }
 
-      .wordmark {
-        font-weight: 800;
-        font-size: 1.45rem;
-        letter-spacing: -0.06em;
-        text-transform: uppercase;
-        line-height: 1;
-        color: #fff;
-      }
-
-      /* Floating nav bar */
-      .nav {
-        position: sticky;
-        top: 16px;
-        z-index: 50;
-        margin-top: 16px;
-      }
-      .nav-bar {
+      /* Top bar + section strip */
+      .top {
         position: relative;
+        top: 0;
+        z-index: 40;
+        background: rgba(11, 11, 11, 0.92);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+      }
+      .bar {
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        height: 62px;
-        padding: 0 22px;
-        background: rgba(22, 22, 22, 0.86);
-        backdrop-filter: blur(14px);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-      }
-      .menu-toggle {
-        display: flex;
-        gap: 5px;
-        background: none;
-        border: 0;
-        padding: 12px 4px;
-        cursor: pointer;
-      }
-      .menu-toggle i {
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: #fff;
-        transition: transform 0.25s;
-      }
-      .menu-toggle[aria-expanded="true"] i:first-child { transform: translateX(5px); }
-      .menu-toggle[aria-expanded="true"] i:last-child { transform: translateX(-5px); }
-      .menu {
-        position: absolute;
-        top: calc(100% + 8px);
-        right: 0;
-        width: min(280px, 100%);
-        padding: 10px;
-        background: rgba(22, 22, 22, 0.96);
-        backdrop-filter: blur(14px);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        display: none;
-      }
-      .menu.open { display: grid; }
-      .menu a, .menu button {
-        display: block;
-        padding: 12px 14px;
-        border-radius: 8px;
-        color: var(--muted);
-        font: 500 1.05rem var(--sans);
-        text-align: left;
-        background: none;
-        border: 0;
-        cursor: pointer;
-      }
-      .menu a:hover, .menu button:hover { background: var(--panel-2); color: #fff; }
-      .menu button { color: #fff; }
-
-      /* Buttons */
-      .button {
-        display: inline-flex;
         align-items: center;
-        gap: 10px;
-        padding: 13px 20px;
-        border-radius: 999px;
-        border: 1px solid #fff;
-        background: #fff;
-        color: #0a0a0a;
-        font: 500 0.95rem var(--sans);
-        cursor: pointer;
-        transition: transform 0.2s, background 0.2s, color 0.2s, border-color 0.2s;
+        height: 48px;
       }
-      .button:hover { transform: translateY(-1px); }
-      .button .arrow { transition: transform 0.2s; }
-      .button:hover .arrow { transform: translateX(3px); }
-      .button-secondary { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.22); }
-      .button-secondary:hover { border-color: #fff; }
-
-      /* Gradient headline text */
-      .fade-text {
-        background: linear-gradient(100deg, #5a5a5a 0%, #a8a8a8 38%, #ffffff 78%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
+      .bar a.brand { font-size: 12px; }
+      .bar .book {
+        background: none;
+        border: 0;
+        padding: 6px 0;
+        cursor: pointer;
+        color: var(--text);
+      }
+      .bar .book:hover { color: var(--accent-text); }
+      .strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid var(--line);
+      }
+      .strip a {
+        padding: 12px var(--pad);
+        border-right: 1px solid var(--line);
+        white-space: nowrap;
+        transition: background 0.15s, color 0.15s;
+      }
+      .strip a:last-child { border-right: 0; }
+      .strip a span { color: var(--dim); margin-right: 6px; transition: color 0.15s; }
+      .strip a:hover, .strip a.active { background: var(--accent); color: #fff; }
+      .strip a:hover span, .strip a.active span { color: rgba(255, 255, 255, 0.7); }
+      @media (max-width: 420px) {
+        .strip a { padding: 12px 10px; font-size: 10px; letter-spacing: 0.04em; }
+        .strip a span { margin-right: 4px; }
+      }
+      @media (min-width: 900px) {
+        .top { position: sticky; }
       }
 
       /* Hero */
-      .hero {
-        min-height: calc(100svh - 80px);
-        display: flex;
-        flex-direction: column;
-        padding: 72px 0 28px;
+      .hero { border-bottom: 1px solid var(--line); }
+      .hero-grid {
+        display: grid;
+        gap: 34px;
+        padding-top: 28px;
+        padding-bottom: 8px;
       }
-      .hero .container { display: flex; flex-direction: column; flex: 1; }
-      .hero h1 {
-        margin: 0;
-        font-size: clamp(2.7rem, 7.4vw, 6.2rem);
-        line-height: 0.98;
-        letter-spacing: -0.05em;
+      @media (min-width: 900px) {
+        .hero-grid {
+          grid-template-columns: 1.6fr 1fr;
+          gap: 56px;
+          align-items: end;
+          padding-top: 64px;
+          padding-bottom: 48px;
+        }
+      }
+      h1 {
+        margin: 14px 0 0;
         font-weight: 500;
-        max-width: 17ch;
+        font-size: clamp(46px, 12.6vw, 96px);
+        line-height: 1;
+        letter-spacing: -0.045em;
       }
-      .hero-sub {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: end;
-        gap: 24px;
-        margin-top: 28px;
-      }
-      .hero-sub p {
-        margin: 0;
-        max-width: 52ch;
+      h1 .soft { color: var(--dim); }
+      .lede {
+        margin: 18px 0 0;
+        font-size: clamp(17px, 1.5vw, 19px);
         color: var(--muted);
-        font-size: 1.08rem;
+        max-width: 38ch;
       }
-      .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
-      /* Chrome coin */
-      .coin-stage {
-        flex: 1;
-        display: grid;
-        place-items: center;
-        min-height: 260px;
-        perspective: 900px;
+      .cta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        width: 100%;
+        margin-top: 22px;
+        padding: 17px 18px;
+        background: var(--accent);
+        color: #fff;
+        border: 0;
+        font-weight: 600;
+        font-size: 16px;
+        text-align: left;
+        cursor: pointer;
         position: relative;
+        overflow: hidden;
       }
-      .coin-stage::before {
+      .cta::before {
         content: "";
         position: absolute;
-        width: 340px;
-        height: 340px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.10), transparent 65%);
-        filter: blur(10px);
+        inset: 0;
+        background: #fff;
+        transform: translateY(101%);
+        transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
       }
-      .coin {
-        width: 170px;
-        height: 170px;
-        transform-style: preserve-3d;
-        animation: spin 9s linear infinite;
-        filter: drop-shadow(0 0 28px rgba(255, 255, 255, 0.18));
-      }
-      .coin svg { width: 100%; height: 100%; display: block; }
-      @keyframes spin {
-        from { transform: rotateY(0deg) rotateX(8deg); }
-        to { transform: rotateY(360deg) rotateX(8deg); }
+      .cta > * { position: relative; }
+      .cta:hover { color: var(--ink); }
+      .cta:hover::before { transform: translateY(0); }
+      .cta .arrow { transition: transform 0.25s; }
+      .cta:hover .arrow { transform: translateX(4px); }
+      @media (min-width: 900px) {
+        .cta { width: auto; min-width: 360px; padding: 18px 22px; font-size: 17px; }
       }
 
-      .scroll-cue {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 14px;
-        margin-top: 16px;
-      }
-      .scroll-cue span:first-child {
+      /* Friction list */
+      .rows { border-top: 1px solid var(--line); }
+      .rows-label { display: block; padding: 12px 0; }
+      .row {
         display: grid;
-        place-items: center;
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        background: var(--panel-2);
-        color: var(--muted);
-        font-size: 0.95rem;
+        grid-template-columns: 36px 1fr auto;
+        gap: 10px;
+        align-items: baseline;
+        width: 100%;
+        padding: 15px 0;
+        background: none;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        font-size: 16px;
+        cursor: pointer;
+        transition: color 0.15s;
       }
+      .row .num, .row .tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--dim); }
+      .row .tag { opacity: 0; transform: translateX(-6px); transition: opacity 0.2s, transform 0.2s; }
+      .row .fix {
+        grid-column: 2 / 4;
+        max-height: 0;
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 15px;
+        transition: max-height 0.3s ease;
+      }
+      .row:hover, .row[aria-expanded="true"] { color: var(--accent-text); }
+      .row:hover .num, .row[aria-expanded="true"] .num,
+      .row:hover .tag, .row[aria-expanded="true"] .tag { color: var(--accent-text); }
+      .row:hover .tag, .row[aria-expanded="true"] .tag { opacity: 1; transform: none; }
+      .row[aria-expanded="true"] .fix { max-height: 80px; padding-top: 6px; }
 
-      @media (prefers-reduced-motion: reduce) {
-        body::before, .coin { animation: none; }
+      /* Wordmark */
+      .mark-wrap { overflow: hidden; padding: 28px 10px 0; }
+      .mark {
+        font-stretch: 125%;
+        font-weight: 800;
+        font-size: 32.5vw;
+        letter-spacing: -0.07em;
+        line-height: 0.74;
+        white-space: nowrap;
+        margin-bottom: -3vw;
+        user-select: none;
+      }
+      .mark i {
+        display: inline-block;
+        width: 0.16em;
+        height: 0.16em;
+        margin-left: 0.04em;
+        background: var(--accent);
+      }
+      @media (min-width: 900px) {
+        .mark-wrap { padding: 40px 18px 0; }
+        .mark { font-size: 33.5vw; margin-bottom: -4.6vw; }
       }
 
       /* Sections */
-      .section { padding: 96px 0; }
-      .section-header {
-        display: grid;
-        grid-template-columns: 200px 1fr;
-        gap: 32px;
-        margin-bottom: 52px;
+      .section { border-bottom: 1px solid var(--line); padding-top: 56px; padding-bottom: 64px; }
+      @media (min-width: 900px) { .section { padding-top: 88px; padding-bottom: 96px; } }
+      .head { display: grid; gap: 14px; margin-bottom: 36px; }
+      @media (min-width: 900px) {
+        .head { grid-template-columns: 220px 1fr; gap: 32px; margin-bottom: 56px; }
       }
-      .section-header h2, .fit-panel h2 {
+      h2 {
         margin: 0;
-        font-size: clamp(2.1rem, 4.6vw, 3.6rem);
+        font-weight: 500;
+        font-size: clamp(34px, 7vw, 64px);
         line-height: 1.02;
-        letter-spacing: -0.045em;
-        font-weight: 500;
+        letter-spacing: -0.04em;
+        max-width: 18ch;
       }
-      .section-header p {
-        margin: 14px 0 0;
-        max-width: 56ch;
-        color: var(--muted);
-        font-size: 1.05rem;
-      }
+      h2 .soft { color: var(--dim); }
+      .head p { margin: 16px 0 0; color: var(--muted); font-size: 17px; max-width: 52ch; }
 
-      /* "Does this sound like you" panel */
-      .fit-panel {
+      .split { display: grid; border-top: 1px solid var(--line); }
+      @media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; } }
+      .split > div { padding: 22px 0; border-bottom: 1px solid var(--line); }
+      @media (min-width: 900px) {
+        .split > div { padding: 28px 28px 28px 0; border-bottom: 0; }
+        .split > div + div { padding-left: 28px; border-left: 1px solid var(--line); }
+      }
+      .split h3 { margin: 10px 0 8px; font-weight: 500; font-size: 24px; letter-spacing: -0.03em; }
+      .split p { margin: 0; color: var(--muted); }
+
+      /* Audit */
+      .audit { display: grid; border: 1px solid var(--line); }
+      @media (min-width: 900px) { .audit { grid-template-columns: 1fr 1fr; } }
+      .audit-main { padding: 24px 18px 28px; }
+      @media (min-width: 900px) { .audit-main { padding: 36px; border-right: 1px solid var(--line); } }
+      .audit-main h3 { margin: 12px 0 12px; font-weight: 500; font-size: clamp(26px, 3vw, 34px); letter-spacing: -0.035em; line-height: 1.05; }
+      .audit-main p { margin: 0; color: var(--muted); }
+      .get { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+      @media (min-width: 900px) { .get { border-top: 0; } }
+      .get li {
         display: grid;
-        grid-template-columns: 0.9fr 1.1fr;
-        gap: 40px;
-        padding: 40px;
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 14px;
+        grid-template-columns: 52px 1fr;
+        padding: 18px 18px 18px 0;
+        border-bottom: 1px solid var(--line);
       }
-      .fit-panel h2 { margin-top: 12px; }
-      .fit-list div {
-        padding: 18px 0;
-        border-top: 1px solid var(--line);
-      }
-      .fit-list div:first-child { border-top: 0; padding-top: 0; }
-      .fit-list strong { display: block; font-weight: 500; color: #fff; margin-bottom: 2px; }
-      .fit-list span { color: var(--muted); }
+      .get li:last-child { border-bottom: 0; }
+      .get .mono { padding-left: 18px; color: var(--accent-text); padding-top: 3px; }
+      .get strong { display: block; font-weight: 500; }
+      .get span.d { color: var(--muted); font-size: 15px; }
 
-      .grid-3 {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
+      /* Engagements */
+      .eng { display: grid; gap: 0; border-top: 1px solid var(--line); }
+      @media (min-width: 900px) { .eng { grid-template-columns: 1fr 1fr; } }
+      .eng article { padding: 26px 0 30px; border-bottom: 1px solid var(--line); transition: background 0.2s; }
+      @media (min-width: 900px) {
+        .eng article { padding: 32px 32px 36px 0; border-bottom: 0; }
+        .eng article + article { padding-left: 32px; border-left: 1px solid var(--line); }
       }
-      .item {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 26px;
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-      }
-      .item h3 {
-        margin: 18px 0 0;
-        font-size: 1.6rem;
-        letter-spacing: -0.035em;
-        line-height: 1.05;
-        font-weight: 500;
-        color: #fff;
-      }
-      .item p { margin: 0; color: var(--muted); }
-      .item .fit { font-size: 0.93rem; color: var(--text); }
-      .item .fit .label { display: block; margin-bottom: 2px; }
-      .item ul { list-style: none; margin: 0; padding: 0; }
-      .item li {
-        display: flex;
-        gap: 10px;
-        padding: 9px 0;
-        border-top: 1px solid var(--line);
-        font-size: 0.94rem;
-      }
-      .item li::before { content: "→"; color: var(--dim); }
+      .eng h3 { margin: 12px 0 10px; font-weight: 500; font-size: clamp(28px, 3.4vw, 40px); letter-spacing: -0.04em; line-height: 1.02; }
+      .eng p { margin: 0 0 18px; color: var(--muted); max-width: 44ch; }
+      .eng ul { margin: 0; padding: 0; list-style: none; }
+      .eng li { display: flex; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 15px; }
+      .eng li::before { content: "→"; color: var(--dim); }
+      .eng .for { margin-top: 18px; font-size: 15px; }
+      .eng .for .mono { display: block; margin-bottom: 4px; }
 
-      .service-note { margin: 36px 0 0; color: var(--muted); }
-      .link-button {
-        background: none;
-        border: 0;
-        padding: 0;
-        color: #fff;
-        font: inherit;
-        text-decoration: underline;
-        text-underline-offset: 3px;
-        cursor: pointer;
+      /* Steps */
+      .steps { display: grid; border-top: 1px solid var(--line); }
+      @media (min-width: 900px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+      .step { padding: 22px 0 26px; border-bottom: 1px solid var(--line); }
+      @media (min-width: 900px) {
+        .step { padding: 28px 28px 32px 0; border-bottom: 0; }
+        .step + .step { padding-left: 28px; border-left: 1px solid var(--line); }
       }
+      .step h3 { margin: 22px 0 8px; font-weight: 500; font-size: 28px; letter-spacing: -0.035em; }
+      .step p { margin: 0; color: var(--muted); max-width: 34ch; }
 
       /* Contact */
-      .contact { padding: 120px 0 100px; text-align: center; }
-      .contact h2 {
-        margin: 18px auto 20px;
-        font-size: clamp(2.4rem, 6.4vw, 5.2rem);
-        line-height: 0.98;
-        letter-spacing: -0.05em;
-        font-weight: 500;
-        max-width: 14ch;
-      }
-      .contact h2 em { font-style: normal; }
-      .contact p { margin: 0 auto 32px; max-width: 46ch; color: var(--muted); font-size: 1.05rem; }
+      .contact h2 { font-size: clamp(40px, 9vw, 88px); max-width: 14ch; }
+      .contact p { margin: 18px 0 0; color: var(--muted); font-size: 17px; max-width: 40ch; }
 
-      /* Footer */
-      footer { padding: 64px 0 36px; border-top: 1px solid var(--line); }
-      .foot-top {
-        display: grid;
-        grid-template-columns: 1.4fr 1fr 1fr;
-        gap: 32px;
-      }
-      .foot-top .wordmark { font-size: 2.6rem; }
-      .foot-top .where { margin-top: 14px; color: var(--muted); display: flex; align-items: center; gap: 10px; }
-      .foot-top .where::after {
-        content: "";
-        width: 6px;
-        height: 6px;
+      footer { padding-top: 22px; padding-bottom: 28px; }
+      .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; }
+
+      /* Reveal motion */
+      .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+      .reveal.in { opacity: 1; transform: none; }
+      .lines .ln { display: block; overflow: hidden; }
+      .lines .ln > span { display: inline-block; transform: translateY(105%); transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+      .lines.in .ln > span { transform: none; }
+      .lines.in .ln:nth-child(2) > span { transition-delay: 0.06s; }
+      .lines.in .ln:nth-child(3) > span { transition-delay: 0.12s; }
+      .lines.in .ln:nth-child(4) > span { transition-delay: 0.18s; }
+
+      /* Cursor dot (desktop only) */
+      .dot {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 80;
+        width: 14px;
+        height: 14px;
+        margin: -7px 0 0 -7px;
         border-radius: 50%;
-        background: #8aff8a;
-        box-shadow: 0 0 10px #8aff8a;
+        background: var(--accent);
+        pointer-events: none;
+        opacity: 0;
+        display: none;
+        transform: translate(-100px, -100px);
+        transition: width 0.2s, height 0.2s, margin 0.2s, opacity 0.2s;
       }
-      .foot-col h4 { margin: 0 0 18px; font-weight: 400; color: var(--muted); font-size: 1.05rem; }
-      .foot-col a, .foot-col button {
-        display: block;
-        margin-bottom: 10px;
-        color: var(--text);
-        font: 400 1.05rem var(--sans);
-        background: none;
-        border: 0;
-        padding: 0;
-        cursor: pointer;
-        text-align: left;
+      .dot.big { width: 44px; height: 44px; margin: -22px 0 0 -22px; opacity: 0.35; }
+      @media (hover: none), (pointer: coarse) { .dot { display: none; } }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .reveal, .lines .ln > span { opacity: 1; transform: none; transition: none; }
+        .dot { display: none; }
+        .cta::before, .row .tag, .row .fix { transition: none; }
       }
-      .foot-col a:hover, .foot-col button:hover { color: #fff; }
-      .foot-bottom {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        margin-top: 56px;
-        padding-top: 24px;
-        border-top: 1px solid var(--line);
-      }
-      .foot-bottom .label { color: var(--dim); }
 
       /* Modal */
-      .consult-modal {
-        width: min(520px, calc(100% - 32px));
-        max-height: calc(100% - 32px);
+      .modal {
+        width: min(520px, calc(100% - 24px));
+        max-height: calc(100% - 24px);
         padding: 0;
         border: 1px solid var(--line);
-        border-radius: 14px;
         background: var(--panel);
         color: var(--text);
       }
-      .consult-modal::backdrop { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); }
-      .modal-inner { padding: 28px; }
-      .modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin: 8px 0 6px; }
-      .modal-head h2 { margin: 0; font-size: 1.8rem; letter-spacing: -0.04em; font-weight: 500; }
-      .modal-close { background: none; border: 0; color: var(--muted); font-size: 1.6rem; line-height: 1; cursor: pointer; padding: 0 4px; }
-      .modal-close:hover { color: #fff; }
-      .modal-sub { margin: 0 0 20px; color: var(--muted); }
-      .consult-form { display: grid; gap: 14px; }
-      .consult-form label { display: grid; gap: 6px; font-size: 0.88rem; color: var(--muted); }
-      .consult-form input, .consult-form textarea {
+      .modal::backdrop { background: rgba(0, 0, 0, 0.75); }
+      .modal-in { padding: 22px 18px 24px; }
+      @media (min-width: 600px) { .modal-in { padding: 28px; } }
+      .modal-head { display: flex; justify-content: space-between; align-items: flex-start; margin: 10px 0 6px; }
+      .modal-head h2 { font-size: 30px; }
+      .x { background: none; border: 0; color: var(--dim); font-size: 26px; line-height: 1; cursor: pointer; padding: 0 2px; }
+      .x:hover { color: #fff; }
+      .modal-sub { margin: 0 0 18px; color: var(--muted); }
+      form { display: grid; gap: 14px; }
+      label { display: grid; gap: 6px; font-size: 14px; color: var(--muted); }
+      input, textarea {
         width: 100%;
         padding: 12px 14px;
-        border-radius: 10px;
         border: 1px solid var(--line);
-        background: var(--panel-2);
+        border-radius: 0;
+        background: var(--ink);
         color: #fff;
         font: inherit;
+        font-size: 16px;
       }
-      .consult-form input:focus, .consult-form textarea:focus { outline: none; border-color: rgba(255, 255, 255, 0.4); }
-      .consult-form textarea { min-height: 110px; resize: vertical; }
-      .consult-form .hp { display: none; }
-      .consult-form .button { justify-content: center; margin-top: 6px; }
-      .consult-form .button:disabled { opacity: 0.6; cursor: wait; }
-      .form-status { margin: 0; font-size: 0.95rem; color: var(--muted); }
-      .form-status.error { color: #ff9a9a; }
-
-      @media (max-width: 960px) {
-        .hero { padding-top: 56px; }
-        .hero-sub, .section-header, .grid-3, .fit-panel, .foot-top { grid-template-columns: 1fr; }
-        .section { padding: 72px 0; }
-        .section-header { gap: 10px; margin-bottom: 36px; }
-        .fit-panel { padding: 28px; gap: 24px; }
-      }
-      @media (max-width: 560px) {
-        .container { width: calc(100% - 32px); }
-        .coin { width: 140px; height: 140px; }
-        .contact { text-align: left; }
-        .contact h2, .contact p { margin-left: 0; }
-      }
+      input:focus, textarea:focus { outline: none; border-color: var(--accent-text); }
+      textarea { min-height: 110px; resize: vertical; }
+      .hp { display: none; }
+      .status { margin: 0; font-size: 15px; color: var(--muted); }
+      .status.error { color: #ff9a9a; }
+      form .cta { margin-top: 4px; width: 100%; }
+      form .cta:disabled { opacity: 0.6; cursor: wait; }
     </style>
   </head>
 
   <body>
-    <header class="nav container">
-      <div class="nav-bar">
-        <a href="#" class="wordmark">LBM Systems</a>
-        <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Menu"><i></i><i></i></button>
-        <nav class="menu" id="site-menu">
-          <a href="#services">Services</a>
-          <a href="#process">Process</a>
-          <a href="#contact">Contact</a>
-          <button type="button" data-open-consult>Book a consult →</button>
-        </nav>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="dot" aria-hidden="true"></div>
+
+    <header class="top">
+      <div class="bar pad">
+        <a href="#top" class="brand mono">LBM Systems</a>
+        <button type="button" class="book mono" data-open-consult>Book an audit</button>
       </div>
+      <nav class="strip mono" aria-label="Sections">
+        <a href="#audit"><span>01</span>The audit</a>
+        <a href="#how"><span>02</span>How it works</a>
+        <a href="#contact"><span>03</span>Contact</a>
+      </nav>
     </header>
 
-    <main>
+    <main id="top">
       <section class="hero">
-        <div class="container">
-          <span class="label">Help for small businesses</span>
-          <h1 class="fade-text" style="margin-top: 18px;">Make your business easier to run.</h1>
-          <div class="hero-sub">
+        <div class="hero-grid pad">
+          <div>
+            <span class="mono dim">Help for small businesses</span>
+            <h1 class="lines" aria-label="We find what's slowing you down. Then we fix it.">
+              <span class="ln" aria-hidden="true"><span>We find what's</span></span>
+              <span class="ln" aria-hidden="true"><span>slowing you down.</span></span>
+              <span class="ln soft" aria-hidden="true"><span>Then we fix it.</span></span>
+            </h1>
+            <p class="lede reveal">Booking, client tracking, follow-ups, your website. It all starts with an audit.</p>
+            <button type="button" class="cta reveal" data-open-consult><span>Book an Experience Audit</span><span class="arrow">→</span></button>
+          </div>
+
+          <div class="rows reveal">
+            <span class="rows-label mono dim">Sound familiar? Tap one.</span>
+            <button type="button" class="row" aria-expanded="false">
+              <span class="num">01</span><span>Bookings get missed</span><span class="tag">Fix →</span>
+              <span class="fix">One place to book, with reminders that go out on their own.</span>
+            </button>
+            <button type="button" class="row" aria-expanded="false">
+              <span class="num">02</span><span>Client info is everywhere</span><span class="tag">Fix →</span>
+              <span class="fix">A simple client list your whole team can find and update.</span>
+            </button>
+            <button type="button" class="row" aria-expanded="false">
+              <span class="num">03</span><span>Same questions, all day</span><span class="tag">Fix →</span>
+              <span class="fix">Answers and follow-ups that send themselves, so you don't have to.</span>
+            </button>
+            <button type="button" class="row" aria-expanded="false">
+              <span class="num">04</span><span>Clients can't find you</span><span class="tag">Fix →</span>
+              <span class="fix">A website and message that make it clear what you do and who it's for.</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="mark-wrap" aria-hidden="true"><div class="mark">LBM<i></i></div></div>
+      </section>
+
+
+      <section class="section pad" id="audit">
+        <div class="head">
+          <span class="mono dim">01 / The audit</span>
+          <div class="reveal">
+            <h2>Everything starts with an Experience Audit.</h2>
+            <p>Not sure what you need? That's normal. The audit tells us both, so you only pay to fix what matters.</p>
+          </div>
+        </div>
+        <div class="audit reveal">
+          <div class="audit-main">
+            <span class="mono dim">What happens</span>
+            <h3>We go through your business the way your clients do.</h3>
             <p>
-              We help small businesses sort out the behind-the-scenes stuff: how people book with you,
-              how you keep track of clients, how your team knows what's next, and the website that ties it together.
+              From finding you, to booking, to paying, to hearing back. We look at what your team deals with too.
+              Then we show you where things get stuck and the simplest fix to start with.
             </p>
-            <div class="hero-actions">
-              <button type="button" class="button" data-open-consult>Book a consult <span class="arrow">→</span></button>
-              <a class="button button-secondary" href="#services">See services</a>
-            </div>
+            <button type="button" class="cta" data-open-consult><span>Book an Experience Audit</span><span class="arrow">→</span></button>
           </div>
-
-          <div class="coin-stage" aria-hidden="true">
-            <div class="coin">
-              <svg viewBox="0 0 200 200">
-                <defs>
-                  <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stop-color="#fafafa" />
-                    <stop offset="0.22" stop-color="#6e6e6e" />
-                    <stop offset="0.42" stop-color="#e8e8e8" />
-                    <stop offset="0.58" stop-color="#3a3a3a" />
-                    <stop offset="0.78" stop-color="#d4d4d4" />
-                    <stop offset="1" stop-color="#5a5a5a" />
-                  </linearGradient>
-                  <linearGradient id="chrome-face" x1="1" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#2a2a2a" />
-                    <stop offset="0.45" stop-color="#0e0e0e" />
-                    <stop offset="1" stop-color="#2e2e2e" />
-                  </linearGradient>
-                  <linearGradient id="chrome-type" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#ffffff" />
-                    <stop offset="0.48" stop-color="#9a9a9a" />
-                    <stop offset="0.52" stop-color="#4a4a4a" />
-                    <stop offset="1" stop-color="#e6e6e6" />
-                  </linearGradient>
-                </defs>
-                <circle cx="100" cy="100" r="96" fill="url(#chrome)" />
-                <circle cx="100" cy="100" r="82" fill="url(#chrome-face)" />
-                <circle cx="100" cy="100" r="82" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1" />
-                <text x="100" y="118" text-anchor="middle" font-family="Geist, sans-serif" font-weight="800" font-size="50" letter-spacing="-3" fill="url(#chrome-type)">LBM</text>
-                <ellipse cx="72" cy="56" rx="34" ry="12" fill="rgba(255,255,255,0.14)" transform="rotate(-30 72 56)" />
-              </svg>
-            </div>
-          </div>
-
-          <a href="#fit" class="scroll-cue"><span>↓</span><span class="label">Scroll</span></a>
+          <ul class="get">
+            <li><span class="mono">01</span><div><strong>A walkthrough of how things work now</strong><span class="d">Written down, so everyone sees the same picture.</span></div></li>
+            <li><span class="mono">02</span><div><strong>What's getting in the way</strong><span class="d">A short list, most important first.</span></div></li>
+            <li><span class="mono">03</span><div><strong>The simplest fix to start with</strong><span class="d">The smallest change that makes a real difference.</span></div></li>
+            <li><span class="mono">04</span><div><strong>What to do next</strong><span class="d">Whether we build the fix with you, or you take it from here.</span></div></li>
+          </ul>
         </div>
       </section>
 
-      <section class="section" id="fit">
-        <div class="container">
-          <div class="fit-panel">
-            <div>
-              <span class="label">Where people usually start</span>
-              <h2 class="fade-text">Does this sound like you?</h2>
-            </div>
-            <div class="fit-list">
-              <div>
-                <strong>Things fall through the cracks</strong>
-                <span>Bookings come in by text, DM, and email, and some get missed.</span>
-              </div>
-              <div>
-                <strong>It's all in your head</strong>
-                <span>Client info lives in a few different places, and only you know where.</span>
-              </div>
-              <div>
-                <strong>You answer the same questions all day</strong>
-                <span>You and your team spend hours on follow-ups that could happen on their own.</span>
-              </div>
-            </div>
-          </div>
+
+      <section class="section pad" id="how">
+        <div class="head">
+          <span class="mono dim">02 / How it works</span>
+          <div class="reveal"><h2>Learn. Build. Maintain.</h2></div>
+        </div>
+        <div class="steps">
+          <div class="step reveal"><span class="mono dim">01 / Learn</span><h3>Audit</h3><p>We talk, look at how things run now, and agree on what to fix first.</p></div>
+          <div class="step reveal"><span class="mono dim">02 / Build</span><h3>Fix it</h3><p>We set it up using tools that make sense for your size and budget.</p></div>
+          <div class="step reveal"><span class="mono dim">03 / Maintain</span><h3>Hand it off</h3><p>We show you how it all works and stay around when something needs to change.</p></div>
         </div>
       </section>
 
-      <section class="section" id="services">
-        <div class="container">
-          <div class="section-header">
-            <span class="label">What we offer</span>
-            <div>
-              <h2 class="fade-text">Services</h2>
-              <p>
-                Not sure what you need? That's normal. Most people start with the audit,
-                and we figure out the rest from there.
-              </p>
-            </div>
-          </div>
-
-          <div class="grid-3">
-            <div class="item">
-              <span class="label">01//03</span>
-              <h3>Experience Audit</h3>
-              <p>
-                We look at how your business works today, from how customers find you to how they book,
-                pay, and hear back. Then we show you where things get stuck and what to fix first.
-              </p>
-              <div class="fit"><span class="label">For you if</span>Something feels off, but you can't say exactly what.</div>
-              <ul>
-                <li>A walkthrough of how things work now</li>
-                <li>A short list of what's getting in the way, most important first</li>
-                <li>The simplest fix to start with</li>
-              </ul>
-            </div>
-            <div class="item">
-              <span class="label">02//03</span>
-              <h3>Build the Fix</h3>
-              <p>
-                Once we know what's wrong, we set up the fix. That might be an online booking form,
-                an easy way to track clients, automatic reminders, or a new website.
-              </p>
-              <div class="fit"><span class="label">For you if</span>You know what the problem is and want someone to handle it.</div>
-              <ul>
-                <li>Booking and sign-up forms</li>
-                <li>Client and schedule tracking in tools like Airtable, Notion, or Google</li>
-                <li>Automatic reminders and follow-ups</li>
-                <li>Websites</li>
-              </ul>
-            </div>
-            <div class="item">
-              <span class="label">03//03</span>
-              <h3>Ongoing Support</h3>
-              <p>
-                After everything is set up, we stick around. We make updates, show your team how to use it,
-                and change things as your business grows.
-              </p>
-              <div class="fit"><span class="label">For you if</span>You want someone to call when something needs changing.</div>
-              <ul>
-                <li>Monthly updates and fixes</li>
-                <li>Walkthroughs and simple how-to guides for your team</li>
-                <li>Regular check-ins</li>
-              </ul>
-            </div>
-          </div>
-
-          <p class="service-note">
-            Not sure which one fits? <button type="button" class="link-button" data-open-consult>Book a consult</button> and tell us what's going on.
-          </p>
-        </div>
-      </section>
-
-      <section class="section" id="process">
-        <div class="container">
-          <div class="section-header">
-            <span class="label">How it works</span>
-            <div>
-              <h2 class="fade-text">Our process</h2>
-              <p>
-                Three steps. You'll always know what we're working on and what comes next.
-              </p>
-            </div>
-          </div>
-
-          <div class="grid-3">
-            <div class="item">
-              <span class="label">01 / Learn</span>
-              <h3>Learn</h3>
-              <p>
-                We talk, look at how things run now, and find what's taking up the most time.
-              </p>
-            </div>
-            <div class="item">
-              <span class="label">02 / Build</span>
-              <h3>Build</h3>
-              <p>
-                We set up the fix using tools that make sense for your size and budget.
-              </p>
-            </div>
-            <div class="item">
-              <span class="label">03 / Maintain</span>
-              <h3>Maintain</h3>
-              <p>
-                We show you how it all works and stay available when something needs to change.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="contact" id="contact">
-        <div class="container">
-          <span class="label">Start here</span>
-          <h2 class="fade-text">Tell us what's been a headache.</h2>
-          <p>
-            Fill out a short form and we'll get back to you to set up a time to talk.
-          </p>
-          <button type="button" class="button" data-open-consult>Book a consult <span class="arrow">→</span></button>
-        </div>
+      <section class="section pad contact" id="contact">
+        <span class="mono dim">03 / Contact</span>
+        <h2 class="reveal" style="margin-top: 14px;">Tell us what's been <span class="soft">a headache.</span></h2>
+        <p class="reveal">Fill out a short form and we'll get back to you to set up a time to talk.</p>
+        <button type="button" class="cta reveal" data-open-consult><span>Book an Experience Audit</span><span class="arrow">→</span></button>
       </section>
     </main>
 
-    <footer>
-      <div class="container">
-        <div class="foot-top">
-          <div>
-            <div class="wordmark">LBM Systems</div>
-            <div class="where">Based in the DC area</div>
-          </div>
-          <div class="foot-col">
-            <h4>Company</h4>
-            <a href="#services">Services</a>
-            <a href="#process">Process</a>
-            <a href="#contact">Contact</a>
-          </div>
-          <div class="foot-col">
-            <h4>Get started</h4>
-            <button type="button" data-open-consult>Book a consult</button>
-          </div>
-        </div>
-        <div class="foot-bottom">
-          <span class="label">Learn. Build. Maintain.</span>
-          <span class="label">© 2026 LBM Systems</span>
-        </div>
+    <footer class="pad">
+      <div class="foot mono dim">
+        <span>LBM Systems / Learn. Build. Maintain.</span>
+        <span>DC area / Remote</span>
+        <span>© 2026</span>
       </div>
     </footer>
 
-    <dialog class="consult-modal" id="consult-modal" aria-labelledby="consult-title">
-      <div class="modal-inner">
-        <span class="label">Start here</span>
+    <dialog class="modal" id="consult-modal" aria-labelledby="consult-title">
+      <div class="modal-in">
+        <span class="mono dim">Start here</span>
         <div class="modal-head">
-          <h2 id="consult-title">Book a consult</h2>
-          <button type="button" class="modal-close" data-close-consult aria-label="Close">&times;</button>
+          <h2 id="consult-title">Book an audit</h2>
+          <button type="button" class="x" data-close-consult aria-label="Close">&times;</button>
         </div>
         <p class="modal-sub">Tell us a little about what's going on and we'll reach out to set up a time.</p>
-
-        <form class="consult-form" id="consult-form" novalidate>
-          <label>Name
-            <input type="text" name="name" autocomplete="name" required />
+        <form id="consult-form" novalidate>
+          <label>Name <input type="text" name="name" autocomplete="name" required /></label>
+          <label>Email <input type="email" name="email" autocomplete="email" required /></label>
+          <label>Phone number <input type="tel" name="phone" autocomplete="tel" required /></label>
+          <label>What's been a headache?
+            <textarea name="message" required placeholder="A few sentences is plenty."></textarea>
           </label>
-          <label>Email
-            <input type="email" name="email" autocomplete="email" required />
-          </label>
-          <label>Phone number
-            <input type="tel" name="phone" autocomplete="tel" required />
-          </label>
-          <label>What problem are you looking to solve?
-            <textarea name="message" required placeholder="A few sentences is plenty. What feels harder than it should?"></textarea>
-          </label>
-          <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" />
-          <button type="submit" class="button">Send request <span class="arrow">→</span></button>
-          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <button type="submit" class="cta"><span>Send request</span><span class="arrow">→</span></button>
+          <p class="status" id="form-status" role="status" aria-live="polite"></p>
         </form>
       </div>
     </dialog>
 
     <script>
       (function () {
+        var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        /* Reveal on scroll */
+        var items = document.querySelectorAll(".reveal, .lines");
+        if (reduce || !("IntersectionObserver" in window)) {
+          items.forEach(function (el) { el.classList.add("in"); });
+        } else {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+            });
+          }, { threshold: 0.15 });
+          items.forEach(function (el) { io.observe(el); });
+        }
+
+        /* Friction rows: one open at a time */
+        var rows = document.querySelectorAll(".row");
+        rows.forEach(function (row) {
+          row.addEventListener("click", function () {
+            var open = row.getAttribute("aria-expanded") === "true";
+            rows.forEach(function (r) { r.setAttribute("aria-expanded", "false"); });
+            row.setAttribute("aria-expanded", open ? "false" : "true");
+          });
+        });
+
+        /* Highlight current section in strip */
+        var links = document.querySelectorAll(".strip a");
+        if ("IntersectionObserver" in window) {
+          var so = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) {
+                links.forEach(function (l) { l.classList.toggle("active", l.getAttribute("href") === "#" + e.target.id); });
+              }
+            });
+          }, { rootMargin: "-45% 0px -50% 0px" });
+          ["audit", "how", "contact"].forEach(function (id) {
+            var el = document.getElementById(id); if (el) so.observe(el);
+          });
+        }
+
+        /* Cursor dot */
+        var dot = document.querySelector(".dot");
+        if (!reduce && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+          dot.style.display = "block";
+          var x = -100, y = -100, tx = -100, ty = -100;
+          window.addEventListener("mousemove", function (e) { tx = e.clientX; ty = e.clientY; if (!dot.classList.contains("big")) dot.style.opacity = 1; });
+          document.addEventListener("mouseleave", function () { dot.style.opacity = 0; });
+          (function loop() {
+            x += (tx - x) * 0.35; y += (ty - y) * 0.35;
+            dot.style.transform = "translate(" + x + "px," + y + "px)";
+            requestAnimationFrame(loop);
+          })();
+          document.querySelectorAll("a, button").forEach(function (el) {
+            el.addEventListener("mouseenter", function () { dot.classList.add("big"); });
+            el.addEventListener("mouseleave", function () { dot.classList.remove("big"); });
+          });
+        }
+
+        /* Modal + form */
         var ENDPOINT = "https://formsubmit.co/ajax/" + ["arneice", "lbm.systems"].join("@");
         var modal = document.getElementById("consult-modal");
         var form = document.getElementById("consult-form");
         var status = document.getElementById("form-status");
         var submit = form.querySelector('button[type="submit"]');
-        var submitLabel = submit.innerHTML;
+        var submitHTML = submit.innerHTML;
 
-        function open() {
+        function openModal() {
           status.textContent = "";
-          status.className = "form-status";
-          if (typeof modal.showModal === "function") modal.showModal();
-          else modal.setAttribute("open", "");
-          var first = form.querySelector("input");
-          if (first) first.focus();
+          status.className = "status";
+          if (typeof modal.showModal === "function") modal.showModal(); else modal.setAttribute("open", "");
+          var first = form.querySelector("input"); if (first) first.focus();
         }
-
-        function close() {
-          if (typeof modal.close === "function") modal.close();
-          else modal.removeAttribute("open");
+        function closeModal() {
+          if (typeof modal.close === "function") modal.close(); else modal.removeAttribute("open");
         }
-
         document.querySelectorAll("[data-open-consult]").forEach(function (el) {
-          el.addEventListener("click", function (e) { e.preventDefault(); open(); });
+          el.addEventListener("click", function (e) { e.preventDefault(); openModal(); });
         });
-        document.querySelectorAll("[data-close-consult]").forEach(function (el) {
-          el.addEventListener("click", close);
-        });
-        modal.addEventListener("click", function (e) { if (e.target === modal) close(); });
-
-        var toggle = document.querySelector(".menu-toggle");
-        var menu = document.getElementById("site-menu");
-        function setMenu(open) {
-          menu.classList.toggle("open", open);
-          toggle.setAttribute("aria-expanded", open ? "true" : "false");
-        }
-        toggle.addEventListener("click", function (e) {
-          e.stopPropagation();
-          setMenu(!menu.classList.contains("open"));
-        });
-        menu.addEventListener("click", function () { setMenu(false); });
-        document.addEventListener("click", function (e) {
-          if (!menu.contains(e.target) && e.target !== toggle) setMenu(false);
-        });
+        document.querySelectorAll("[data-close-consult]").forEach(function (el) { el.addEventListener("click", closeModal); });
+        modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
 
         form.addEventListener("submit", function (e) {
           e.preventDefault();
-          if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-          }
+          if (!form.checkValidity()) { form.reportValidity(); return; }
           var data = Object.fromEntries(new FormData(form).entries());
           if (data._honey) return;
           delete data._honey;
-          data._subject = "New consult request from " + data.name;
+          data._subject = "New audit request from " + data.name;
           data._replyto = data.email;
           data._template = "table";
-
           submit.disabled = true;
-          submit.textContent = "Sending...";
-          status.textContent = "";
-          status.className = "form-status";
-
+          submit.innerHTML = "<span>Sending...</span>";
           fetch(ENDPOINT, {
             method: "POST",
             headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -783,18 +640,15 @@
           })
             .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
             .then(function (res) {
-              if (!res.ok || String(res.j.success) === "false") throw new Error(res.j.message || "Send failed");
+              if (!res.ok || String(res.j.success) === "false") throw new Error("fail");
               form.reset();
               status.textContent = "Thanks! We got your request and will be in touch soon.";
             })
             .catch(function () {
               status.textContent = "Something went wrong sending your request. Please try again in a moment.";
-              status.className = "form-status error";
+              status.className = "status error";
             })
-            .finally(function () {
-              submit.disabled = false;
-              submit.innerHTML = submitLabel;
-            });
+            .finally(function () { submit.disabled = false; submit.innerHTML = submitHTML; });
         });
       })();
     </script>
