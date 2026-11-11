@@ -276,6 +276,37 @@
         color: var(--muted);
       }
 
+      .service-card {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .service-card .service-for {
+        color: var(--text);
+        font-size: 0.95rem;
+      }
+
+      .service-card ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .service-card ul li + li {
+        margin-top: 6px;
+      }
+
+      .service-note {
+        margin-top: 22px;
+        color: var(--muted);
+      }
+
+      .service-note a {
+        color: var(--text);
+      }
+
       .process {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -397,7 +428,7 @@
               and build systems that make execution smoother, faster, and easier to manage.
             </p>
             <div class="hero-actions">
-              <a class="button button-primary" href="mailto:hello@lbm.systems">Book a consult</a>
+              <a class="button button-primary" href="mailto:arneice@lbm.systems?subject=Consult%20request">Book a consult</a>
               <a class="button button-secondary" href="#services">See services</a>
             </div>
           </div>
@@ -435,34 +466,56 @@
           <div class="section-header">
             <h2>Services</h2>
             <p>
-              Practical support to simplify operations, reduce friction,
-              and build systems your business can actually run on.
+              You don't need to know exactly what you need. If something in your business
+              feels harder than it should, start with the audit and we'll figure out the rest together.
             </p>
           </div>
 
           <div class="grid-3">
-            <div class="section-card">
-              <h3>Operational friction</h3>
+            <div class="section-card service-card">
+              <h3>Experience Audit</h3>
               <p>
-                Repetitive tasks, unclear handoffs, too many tools, and work that depends
-                too much on memory or constant checking in.
+                I walk through your business the way your customers and your team do, find
+                the friction points, and hand you a clear plan with the simplest fix that will work.
               </p>
+              <div class="service-for">Good if: things feel messy but you can't pinpoint why.</div>
+              <ul>
+                <li>Walkthrough of how work and customers move through your business</li>
+                <li>A prioritized list of what's slowing you down</li>
+                <li>A recommended minimum viable solution you can act on right away</li>
+              </ul>
             </div>
-            <div class="section-card">
-              <h3>Workflow confusion</h3>
+            <div class="section-card service-card">
+              <h3>Build the Fix</h3>
               <p>
-                Processes that grew over time without a clear system, creating slowdowns,
-                missed steps, and inconsistent execution.
+                Once we know what's broken, I build it. That could be a booking or intake flow,
+                a website, a client tracker, automations, or a simple setup that ties your tools together.
               </p>
+              <div class="service-for">Good if: you know the problem and want it handled.</div>
+              <ul>
+                <li>Websites, forms, and intake or booking flows</li>
+                <li>Client, staff, and scheduling systems (Airtable, Notion, Google Workspace)</li>
+                <li>Automations that cut out repetitive follow-up</li>
+              </ul>
             </div>
-            <div class="section-card">
-              <h3>Scaling strain</h3>
+            <div class="section-card service-card">
+              <h3>Ongoing Support</h3>
               <p>
-                Growth that creates more pressure instead of more ease because the
-                backend was never designed to support it.
+                A system only helps if it keeps working. I stay on to make updates, train your team,
+                and adjust things as your business grows.
               </p>
+              <div class="service-for">Good if: you want a go-to person behind the scenes.</div>
+              <ul>
+                <li>Monthly updates and fixes</li>
+                <li>Team walkthroughs and simple how-to guides</li>
+                <li>Check-ins to spot new friction before it piles up</li>
+              </ul>
             </div>
           </div>
+
+          <p class="service-note">
+            Not sure which one fits? <a href="mailto:arneice@lbm.systems?subject=Consult%20request">Book a consult</a> and tell me what's going on.
+          </p>
         </div>
       </section>
 
@@ -553,7 +606,8 @@
             </div>
 
             <div class="contact-links">
-              <a class="button button-primary" href="mailto:hello@lbm.systems">Email LBM Systems</a>
+              <a class="button button-primary" href="mailto:arneice@lbm.systems?subject=Consult%20request">Book a consult</a>
+              <a class="button button-secondary" href="mailto:arneice@lbm.systems">arneice@lbm.systems</a>
             </div>
           </div>
         </div>
