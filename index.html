@@ -388,6 +388,19 @@
       .lines.in .ln:nth-child(3) > span { transition-delay: 0.12s; }
       .lines.in .ln:nth-child(4) > span { transition-delay: 0.18s; }
 
+      /* Broken headline */
+      .broken .ln { display: block; }
+      .broken .w { display: inline-block; white-space: nowrap; }
+      .broken .ch {
+        display: inline-block;
+        transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.2), color 0.3s, opacity 0.3s;
+      }
+      .broken .ch.off {
+        transform: translate(var(--x), var(--y)) rotate(var(--r));
+      }
+      .broken .ch.glitch { color: var(--accent-text); }
+      .broken .ln.soft .ch.glitch { color: var(--accent); }
+
       /* Cursor dot (desktop only) */
       .dot {
         position: fixed;
@@ -475,7 +488,7 @@
         <div class="hero-grid pad">
           <div>
             <span class="mono dim">Help for small businesses</span>
-            <h1 class="lines" aria-label="We find what's slowing you down. Then we fix it.">
+            <h1 class="broken" aria-label="We find what's slowing you down. Then we fix it.">
               <span class="ln" aria-hidden="true"><span>We find what's</span></span>
               <span class="ln" aria-hidden="true"><span>slowing you down.</span></span>
               <span class="ln soft" aria-hidden="true"><span>Then we fix it.</span></span>
@@ -594,6 +607,55 @@
     <script>
       (function () {
         var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        /* Broken headline that fixes itself */
+        (function () {
+          var h = document.querySelector("h1.broken");
+          if (!h || reduce) return;
+          var GLYPHS = "#%&/\\|<>_=+*?!";
+          var chars = [];
+          h.querySelectorAll(".ln > span").forEach(function (line, li) {
+            var text = line.textContent;
+            line.textContent = "";
+            text.split(" ").forEach(function (word, wi, arr) {
+              var w = document.createElement("span");
+              w.className = "w";
+              word.split("").forEach(function (c) {
+                var ch = document.createElement("span");
+                ch.className = "ch off";
+                ch.dataset.c = c;
+                ch.textContent = c;
+                var big = Math.random() < 0.35;
+                ch.style.setProperty("--x", ((Math.random() - 0.5) * (big ? 0.5 : 0.18)).toFixed(3) + "em");
+                ch.style.setProperty("--y", ((Math.random() - 0.5) * (big ? 0.7 : 0.25)).toFixed(3) + "em");
+                ch.style.setProperty("--r", ((Math.random() - 0.5) * (big ? 40 : 12)).toFixed(1) + "deg");
+                if (/[A-Za-z]/.test(c) && Math.random() < 0.3) ch.classList.add("glitch");
+                chars.push({ el: ch, line: li });
+                w.appendChild(ch);
+              });
+              line.appendChild(w);
+              if (wi < arr.length - 1) line.appendChild(document.createTextNode(" "));
+            });
+          });
+
+          var scramble = setInterval(function () {
+            chars.forEach(function (o) {
+              if (o.el.classList.contains("glitch")) o.el.textContent = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+            });
+          }, 70);
+
+          var start = 650;
+          var lastFix = 0;
+          chars.forEach(function (o) {
+            var t = start + o.line * 260 + Math.random() * 700;
+            lastFix = Math.max(lastFix, t);
+            setTimeout(function () {
+              o.el.classList.remove("glitch", "off");
+              o.el.textContent = o.el.dataset.c;
+            }, t);
+          });
+          setTimeout(function () { clearInterval(scramble); }, lastFix + 20);
+        })();
 
         /* Reveal on scroll */
         var items = document.querySelectorAll(".reveal, .lines");
