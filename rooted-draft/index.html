@@ -129,7 +129,11 @@ p{margin:0}
 .pd-actions small{font-size:14px;color:var(--muted)}
 
 /* Approach */
-.approach{background:var(--paper);border-radius:48px;margin-top:16px}
+.approach.wrap{background:var(--paper);border-radius:0;max-width:none;margin:16px -16px 0}
+.approach .split{max-width:1232px;margin:0 auto}
+.teach-lead{display:flex;flex-direction:column}
+.teach-photo{flex:1 1 auto;min-height:240px;margin-bottom:32px;background:#CFC8BF;border-radius:32px;display:flex;align-items:flex-end;padding:16px}
+.teach-photo span{font-size:12px;background:var(--paper);padding:4px 10px;border-radius:999px}
 .row{display:flex;flex-wrap:wrap;gap:8px 48px;padding:32px 0;border-top:1px solid var(--line)}
 .row h3{flex:1 1 220px;font-size:22px;line-height:1.25}
 .row p{flex:2 1 340px;color:var(--ink-2)}
@@ -224,7 +228,10 @@ p{margin:0}
   .pd-gallery{grid-template-columns:1fr 1fr;grid-template-rows:160px 100px}
   .pd-actions{margin:0 -20px -24px;padding:16px 20px 20px}
   .pd-gallery .ph:first-child{grid-row:auto;grid-column:span 2}
-  .approach{border-radius:36px;padding:40px 22px 12px}
+  .approach.wrap{border-radius:0;margin:12px -12px 0;padding:44px 24px 20px}
+  .approach .split{flex-direction:column;gap:32px}
+  .approach .lead,.approach .body{flex:none;width:100%}
+  .teach-photo{flex:none;min-height:200px;margin-bottom:24px}
   .row{padding:18px 0}
   .row h3{font-size:18px}
   .row p{font-size:15px}
@@ -329,7 +336,8 @@ p{margin:0}
 
 <section id="approach" class="section approach wrap">
   <div class="split">
-    <div class="lead">
+    <div class="lead teach-lead">
+      <div class="teach-photo" role="img" aria-label="Photo placeholder: a lesson in progress"><span>Photo: a lesson in progress</span></div>
       <h2 class="h-xl">How we teach</h2>
       <p class="lead-sub ink">Tuesdays and Thursdays focus on academics. Wednesdays and Fridays take learning into the community through field trips and projects.</p>
     </div>
