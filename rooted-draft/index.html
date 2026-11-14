@@ -87,7 +87,8 @@ p{margin:0}
 .tile{position:absolute;border:8px solid var(--ground);border-radius:28px;overflow:hidden;z-index:2;will-change:transform,opacity}
 .tile img{width:100%;height:100%;object-fit:cover;display:block}
 .tile span{font-size:12px;background:var(--paper);padding:4px 10px;border-radius:999px}
-.reveal-main{position:absolute;left:0;right:0;top:48px;bottom:48px;background:#A89F94;border-radius:80px;z-index:1;display:flex;align-items:flex-end;padding:48px;transform:scale(.42);will-change:transform}
+.reveal-card{position:relative;z-index:1}
+.reveal-main{overflow:hidden;position:absolute;left:0;right:0;top:48px;bottom:48px;background:#A89F94;border-radius:80px;z-index:1;display:flex;align-items:flex-end;padding:48px;transform:scale(.42);will-change:transform}
 .reveal-card{background:var(--paper);border-radius:28px;padding:32px 36px;max-width:520px;opacity:0}
 .reveal-card h2{font-size:40px;line-height:1.08;letter-spacing:-.02em}
 .reveal-card p{margin-top:12px;color:var(--ink-2)}
@@ -126,7 +127,7 @@ p{margin:0}
 .pd-gallery{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:150px 150px;gap:12px}
 .pd-gallery .ph{background:#BFB7AC;border-radius:24px;display:flex;align-items:flex-end;padding:14px}
 .pd-gallery .ph:first-child{grid-row:span 2;background:#A89F94}
-.pd-gallery .ph span{font-size:12px;background:var(--paper);padding:4px 10px;border-radius:999px}
+.pd-gallery .ph span{position:relative;z-index:1;font-size:12px;background:var(--paper);padding:4px 10px;border-radius:999px}
 .pd-actions{position:sticky;bottom:0;background:var(--paper);margin:0 -40px -40px;padding:20px 40px 32px;display:flex;flex-wrap:wrap;align-items:center;gap:20px;border-top:1px solid var(--line-2)}
 .pd-actions .btn{padding:16px 30px;font-size:17px}
 .pd-actions small{font-size:14px;color:var(--muted)}
@@ -251,7 +252,7 @@ p{margin:0}
 </style>
 </head>
 <body>
-<div class="draft">Draft preview for RootEd Foundation · not public · placeholders in [brackets]</div>
+<div class="draft">Draft preview for RootEd Foundation · not public</div>
 <div class="page">
 
 <header class="site-header wrap">
@@ -298,8 +299,8 @@ p{margin:0}
 <section class="reveal wrap" id="reveal" aria-labelledby="reveal-title">
   <div class="reveal-stage">
     <div id="tiles"></div>
-    <div class="reveal-main" id="reveal-main" role="img" aria-label="Photo placeholder: the outside of the RootEd School House">
-      <span class="ph-label">Photo: outside of the School House</span>
+    <div class="reveal-main ph-img" id="reveal-main">
+      <img src="assets/photos/sh-exterior.jpg" alt="The RootEd School House from the driveway" loading="lazy">
       <div class="reveal-card" id="reveal-card">
         <h2 id="reveal-title">A home of our own, opening January 4</h2>
         <p>The RootEd School House: a dedicated, county-licensed space with a full kitchen, several bathrooms and a huge yard to grow in.</p>
@@ -400,9 +401,9 @@ p{margin:0}
     <h2 id="pd-sh-title" class="pd-age">RootEd School House · Birth to 12</h2>
     <p class="pd-copy">A dedicated, county-licensed home for daycare and our younger learners, with a full kitchen, several bathrooms and a huge yard. Renovations are underway now.</p>
     <div class="pd-gallery">
-      <div class="ph" role="img" aria-label="Projected image placeholder: the School House and yard"><span>Projected: the house and yard</span></div>
-      <div class="ph" role="img" aria-label="In-progress photo placeholder"><span>In progress: renovation</span></div>
-      <div class="ph" role="img" aria-label="Projected image placeholder: a learning space"><span>Projected: learning space</span></div>
+      <div class="ph ph-img"><img src="assets/photos/sh-exterior.jpg" alt="The RootEd School House and driveway" loading="lazy"><span>The house</span></div>
+      <div class="ph ph-img"><img src="assets/photos/sh-siteplan.jpg" alt="Site plan showing play areas, garden beds and parking" loading="lazy"><span>Projected: yard and play areas</span></div>
+      <div class="ph ph-img"><img src="assets/photos/sh-inside.jpg" alt="A bright room inside the School House, mid-renovation" loading="lazy"><span>In progress: renovation</span></div>
     </div>
     <div class="pd-actions">
       <a class="btn" href="https://visit.roottorisemicroschool.com">Enroll now</a>
@@ -513,18 +514,18 @@ p{margin:0}
   var tilesEl = document.getElementById('tiles');
   var desk = [
     { l:3,  t:10, w:18, h:34, dx:-520, dy:-260, bg:'#CFC8BF', img:'painting' },
-    { l:27, t:3,  w:15, h:19, dx:-160, dy:-420, bg:'#BFB7AC', img:'building' },
-    { l:56, t:6,  w:19, h:23, dx:220,  dy:-420, bg:'#CFC8BF', img:'fractions' },
+    { l:27, t:3,  w:15, h:19, dx:-160, dy:-420, bg:'#BFB7AC', img:'multiply' },
+    { l:56, t:6,  w:19, h:23, dx:220,  dy:-420, bg:'#CFC8BF', img:'phonics' },
     { l:78, t:25, w:18, h:33, dx:560,  dy:-120, bg:'#BFB7AC', img:'math' },
     { l:9,  t:63, w:20, h:25, dx:-520, dy:320,  bg:'#BFB7AC', img:'music' },
-    { l:60, t:68, w:18, h:24, dx:380,  dy:380,  bg:'#CFC8BF', img:'playroom' }
+    { l:60, t:68, w:18, h:24, dx:380,  dy:380,  bg:'#CFC8BF', img:'toddlers' }
   ];
   var phone = [
     { l:3,  t:7,  w:34, h:22, dx:-260, dy:-200, bg:'#CFC8BF', img:'painting' },
-    { l:40, t:2,  w:28, h:14, dx:-30,  dy:-300, bg:'#BFB7AC', img:'building' },
-    { l:68, t:9,  w:29, h:20, dx:260,  dy:-220, bg:'#CFC8BF', img:'fractions' },
+    { l:40, t:2,  w:28, h:14, dx:-30,  dy:-300, bg:'#BFB7AC', img:'multiply' },
+    { l:68, t:9,  w:29, h:20, dx:260,  dy:-220, bg:'#CFC8BF', img:'phonics' },
     { l:4,  t:63, w:32, h:18, dx:-260, dy:240,  bg:'#BFB7AC', img:'music' },
-    { l:62, t:67, w:34, h:20, dx:260,  dy:260,  bg:'#CFC8BF', img:'math' }
+    { l:62, t:67, w:34, h:20, dx:260,  dy:260,  bg:'#CFC8BF', img:'toddlers' }
   ];
   var set = [], tiles = [];
   function buildTiles(){
