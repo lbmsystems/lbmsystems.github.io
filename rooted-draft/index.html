@@ -65,7 +65,14 @@ p{margin:0}
 .split > .lead{flex:1 1 320px}
 .split > .body{flex:2 1 560px}
 .what p.big{font-size:24px;line-height:1.5}
-.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);margin-top:32px}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);margin-top:32px}
+.facts-dark{border-top-color:var(--muted);margin-top:0}
+.facts-dark div + div{border-left-color:var(--muted)}
+.facts.facts-dark strong{color:var(--paper)}
+.facts.facts-dark span{color:var(--line-2)}
+.what-lead{display:flex;flex-direction:column;gap:32px}
+.what-photo{flex:1 1 auto;min-height:200px;background:#CFC8BF;border-radius:32px;display:flex;align-items:flex-end;padding:16px}
+.what-photo span{font-size:12px;background:var(--paper);padding:4px 10px;border-radius:999px}
 .facts div{padding:20px 20px 0}
 .facts div:first-child{padding-left:0}
 .facts div + div{border-left:1px solid var(--line)}
@@ -188,6 +195,11 @@ p{margin:0}
   .h-l{font-size:30px}
   .what p.big{font-size:18px}
   .facts{grid-template-columns:1fr}
+  .what-photo{min-height:220px;order:2}
+  .what-lead{display:contents}
+  .what .split{display:flex;flex-direction:column;gap:24px}
+  .what .body{order:1;flex:none}
+  .what .what-photo{flex:none}
   .facts div,.facts div:first-child{padding:14px 0;border-left:0 !important;border-bottom:1px solid var(--line)}
   .reveal{height:calc(100vh + 700px);height:calc(100svh + 700px);margin:0 -12px}
   .reveal-stage{padding:0 12px}
@@ -263,14 +275,12 @@ p{margin:0}
 
 <section class="section wrap what">
   <div class="split">
-    <h2 class="lead h-l">What is RootEd Foundation?</h2>
+    <div class="lead what-lead">
+      <h2 class="h-l">What is RootEd Foundation?</h2>
+      <div class="what-photo" role="img" aria-label="Photo placeholder: students and teachers together"><span>Photo: students and teachers together</span></div>
+    </div>
     <div class="body">
       <p class="big">RootEd Foundation is a nonprofit running two schools: the RootEd School House for children from birth to 12, and Root to Rise Microschool &amp; Project Center for students 12 and up. In both, children learn at their own pace in small multi-age groups, with core academics taught in depth alongside practical skills: growing food, caring for body and mind, and running real projects.</p>
-      <div class="facts">
-        <div><strong>Nonprofit</strong><span>Registered 501(c)(3)</span></div>
-        <div><strong>Accredited</strong><span>by [CARE full name]</span></div>
-        <div><strong>Aid accepted</strong><span>County subsidies and scholarships</span></div>
-      </div>
     </div>
   </div>
 </section>
@@ -364,7 +374,12 @@ p{margin:0}
     <h2>Rooted in community, rising in possibility</h2>
     <a class="btn-light" href="https://visit.roottorisemicroschool.com">Book a visit</a>
   </div>
-  <p class="note">Tours run Mondays and Fridays. Bring your child, and bring your questions.</p>
+  <div class="facts facts-dark">
+    <div><strong>Nonprofit</strong><span>Registered 501(c)(3)</span></div>
+    <div><strong>Accredited</strong><span>by [CARE full name]</span></div>
+    <div><strong>Aid accepted</strong><span>County subsidies and scholarships</span></div>
+    <div><strong>Tours</strong><span>Mondays and Fridays</span></div>
+  </div>
 </section>
 
 <dialog class="pd" id="pd-schoolhouse" aria-labelledby="pd-sh-title">
