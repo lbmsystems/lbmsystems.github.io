@@ -88,14 +88,14 @@ p{margin:0}
 .programs-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:48px}
 .programs-head h2{max-width:680px}
 .programs-head p{max-width:360px;color:var(--line-2);font-size:16px}
-.branches{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:16px}
-.branch{background:var(--paper);color:var(--ink);border-radius:36px;padding:40px;display:flex;flex-direction:column;gap:20px}
+.branches{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));column-gap:16px;row-gap:16px}
+.branch{background:var(--paper);color:var(--ink);border-radius:36px;padding:40px;display:grid;grid-template-rows:subgrid;grid-row:span 4;row-gap:20px}
 .branch .logo-block{min-height:100px}
 .branch .logo-block img{height:64px;width:auto}
 .branch .sub{margin-top:8px;font-family:var(--display);font-weight:600;font-size:17px}
 .branch .age{font-family:var(--display);font-weight:700;font-size:64px;line-height:.95;letter-spacing:-.03em}
 .branch .desc{font-size:18px}
-.callout{margin-top:auto;background:var(--ground);border-radius:24px;padding:20px 24px}
+.callout{align-self:stretch;background:var(--ground);border-radius:24px;padding:20px 24px}
 .callout h4{font-size:17px}
 .callout p{margin-top:6px;font-size:15px;color:var(--ink-2)}
 
@@ -177,7 +177,7 @@ p{margin:0}
   .reveal-card p{font-size:15px}
   .programs{border-radius:36px;padding:44px 14px 14px}
   .programs-head{margin:0 8px 24px}
-  .branch{border-radius:28px;padding:26px 22px;gap:12px}
+  .branch{border-radius:28px;padding:26px 22px;row-gap:12px}
   .branch .logo-block{min-height:0}
   .branch .logo-block img{height:46px}
   .branch .age{font-size:44px}
@@ -289,7 +289,6 @@ p{margin:0}
   <div class="split">
     <div class="lead">
       <h2 class="h-xl">How we teach</h2>
-      <p class="lead-sub">Strong academics and real-world skills, in a community that knows every child by name.</p>
       <p class="lead-sub ink">Tuesdays and Thursdays focus on academics. Wednesdays and Fridays take learning into the community through field trips and projects.</p>
     </div>
     <div class="body">
@@ -311,7 +310,6 @@ p{margin:0}
       <li><h3>Take a tour</h3><p>See the space and meet the teachers.</p></li>
       <li><h3>Tell us about your child</h3><p>Their interests, needs and how school has gone so far.</p></li>
       <li><h3>Review any IEPs or 504s</h3><p>So we can plan the right support from day one.</p></li>
-      <li><h3>Hear from your child</h3><p>Kids have a say in where they'll learn best.</p></li>
     </ol>
   </div>
 </section>
@@ -325,7 +323,6 @@ p{margin:0}
     <div class="body aid">
       <div class="card"><h3>School House families</h3><p>Families who meet county income guidelines can use childcare subsidies toward tuition at the RootEd School House.</p></div>
       <div class="card"><h3>Microschool families</h3><p>Apply for scholarships through the <a href="https://careducationfoundation.org/programs/">CAREducation Foundation</a>. County subsidies may also apply.</p></div>
-      <p style="grid-column:1/-1;margin-top:8px;font-size:16px">Tuition rates for 2027: [link to rates]</p>
     </div>
   </div>
 </section>
