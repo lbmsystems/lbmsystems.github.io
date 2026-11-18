@@ -41,6 +41,8 @@ p{margin:0}
 .hero-intro{position:relative;z-index:4;max-width:400px;font-size:16px}
 .carousel{position:absolute;left:0;right:0;top:110px;height:620px;z-index:3}
 .clip{position:absolute;left:50%;top:0;width:320px;height:560px;margin-left:-160px;border:0;border-radius:28px;background:var(--dark);display:flex;align-items:flex-end;justify-content:center;padding:0 0 20px;cursor:pointer;transition:transform .6s ease,opacity .6s ease;font:inherit}
+.clip{overflow:hidden}
+.clip video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .clip span{font-size:13px;color:var(--ink);background:var(--paper);padding:6px 12px;border-radius:999px}
 .bubble{position:absolute;left:50%;top:36px;margin:0 0 0 -262px;max-width:200px;z-index:8;background:#fff;color:var(--ink);font-family:var(--display);font-weight:600;font-size:18px;line-height:1.25;padding:14px 18px;border-radius:22px;transform-origin:85% 100%;transform:rotate(-6deg) scale(.6);opacity:0;transition:opacity .35s ease .3s,transform .35s ease .3s;pointer-events:none}
 .bubble::after{content:"";position:absolute;right:26px;bottom:-6px;width:14px;height:14px;background:#fff;transform:rotate(45deg);border-radius:3px}
@@ -523,7 +525,7 @@ p{margin:0}
 
   /* ---------- Hero carousel ---------- */
   var data = [
-    { label:'welcome circle', blurb:'A short description of the video', color:'#B9512F' },
+    { label:'engineering challenge', blurb:'Spaghetti, marshmallows and a whole lot of confidence', color:'#B9512F', video:'assets/videos/engineering.mp4', poster:'assets/videos/engineering.jpg' },
     { label:'garden time',    blurb:'A short description of the video',                  color:'#4F6B3A' },
     { label:'field trip',     blurb:'A short description of the video', color:'#2F5D8A' },
     { label:'market day',     blurb:'A short description of the video',            color:'#8A5A2B' },
@@ -539,7 +541,10 @@ p{margin:0}
   data.forEach(function(d, i){
     var c = document.createElement('button');
     c.type = 'button'; c.className = 'clip';
-    c.innerHTML = '<span>Video: ' + d.label + '</span>';
+    c.setAttribute('aria-label', 'Show ' + d.label);
+    c.innerHTML = d.video
+      ? '<video src="' + d.video + '" poster="' + d.poster + '" muted loop playsinline preload="metadata"' + (reduce ? '' : ' autoplay') + ' aria-hidden="true"></video>'
+      : '<span>Video: ' + d.label + '</span>';
     c.addEventListener('click', function(){ go(i); });
     clipsEl.appendChild(c); clips.push(c);
     var b = document.createElement('p');
