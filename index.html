@@ -718,8 +718,11 @@
           data._template = "table";
           submit.disabled = true;
           submit.innerHTML = "<span>Sending...</span>";
+          var ctrl = "AbortController" in window ? new AbortController() : null;
+          var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 4000) : null;
           fetch(ENDPOINT, {
             method: "POST",
+            signal: ctrl ? ctrl.signal : undefined,
             headers: { "Content-Type": "application/json", Accept: "application/json" },
             body: JSON.stringify(data)
           })
@@ -732,12 +735,12 @@
             .catch(function (err) {
               // Network-level failure (Safari: "Load failed", Chrome: "Failed to fetch").
               // Fall back to a regular form post, which isn't blocked the same way.
-              if (err && err.name === "TypeError") { fallbackPost(data); return; }
+              if (err && (err.name === "TypeError" || err.name === "AbortError")) { fallbackPost(data); return; }
               var msg = err && err.message && err.message !== "fail" ? err.message : "";
               status.textContent = msg || "Something went wrong sending your request. Please try again in a moment.";
               status.className = "status error";
             })
-            .finally(function () { submit.disabled = false; submit.innerHTML = submitHTML; });
+            .finally(function () { if (timer) clearTimeout(timer); submit.disabled = false; submit.innerHTML = submitHTML; });
         });
       })();
     </script>
